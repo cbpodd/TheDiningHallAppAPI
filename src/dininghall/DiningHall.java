@@ -23,9 +23,4 @@ public class DiningHall {
 	private Collection<MealTime> getMealTimes(String name, LocalDate date) {
 		return null;
 	}
-
-	public static void main(String[] args) {
-		DiningHall d = new DiningHall(null, null);
-		System.out.println("Works");
-	}
 }
