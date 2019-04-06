@@ -43,7 +43,6 @@ public class DiningHallImporter implements Runnable {
 			
 			JSONParser p = new JSONParser();
 			String jsonString = sb.toString();
-			jsonString = jsonString.replaceAll("[\\n\\t]", "");
 			json = (JSONObject)p.parse(jsonString);
 		} catch (MalformedURLException me) {
 			me.printStackTrace();
