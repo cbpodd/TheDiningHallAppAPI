@@ -1,3 +1,5 @@
 # TheDiningHallAppAPI
 
-API for The DIning Hall app at USC
+API for The Dining Hall app at **USC**
+
+
