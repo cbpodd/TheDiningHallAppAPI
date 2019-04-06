@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import importer.DiningHallImporter;
 
 public class DiningHallImporterTest {
+
     @Test
     public void createDHI() {
 		LocalDate d = LocalDate.now();
