@@ -3,6 +3,8 @@ package dininghall;
 import java.time.LocalDate;
 import java.util.Collection;
 
+import org.json.simple.JSONObject;
+
 public class DiningHall {
 	private Collection<MealTime> mtimes;
 	private LocalDate date;
@@ -15,10 +17,15 @@ public class DiningHall {
 	}
 
 	public JSONObject toJSON() {
-		
+		return null;
 	}
 
 	private Collection<MealTime> getMealTimes(String name, LocalDate date) {
 		return null;
+	}
+
+	public static void main(String[] args) {
+		DiningHall d = new DiningHall(null, null);
+		System.out.println("Works");
 	}
 }
