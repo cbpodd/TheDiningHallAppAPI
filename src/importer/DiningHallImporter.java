@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +18,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import data.MySQL;
+
 public class DiningHallImporter implements Runnable {
 	private LocalDate date;
 	private JSONArray res = null;
@@ -25,6 +27,11 @@ public class DiningHallImporter implements Runnable {
 
 	public DiningHallImporter(LocalDate d) {
 		this.date = d;
+	}
+
+	public void run() {
+		this.res = getFromScraper();
+		this.importToDatabase();
 	}
 
 	private JSONArray getFromScraper() {
@@ -60,119 +67,27 @@ public class DiningHallImporter implements Runnable {
 		return json;
 	}
 
-	public void run() {
-		this.res = getFromScraper();
-		System.out.println(this.res.get(0));
-		this.importToDatabase();
-	}
-
 	private void importToDatabase() {
-		Connection conn = getConnection();
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		MySQL msql = new MySQL();
 
 		for (int i = 0; i < this.res.size(); i++) {
 			JSONObject json = (JSONObject)this.res.get(i);
-			int dhID = getdhID((String)json.get("dining_hall"), conn, ps, rs);
-			int mID = getmID((String)json.get("meal"), conn, ps, rs);
-		}
-
-		closeConnection(conn, ps, rs);
-	}
-
-	private int getdhID(String dhName, Connection conn, PreparedStatement ps, ResultSet rs) {
-		int id = -1;
-		try {
-			String sql = "SELECT diningHallID FROM DiningHalls WHERE name=?;";
-			ps = conn.prepareStatement(sql);
-			ps.setString(0, dhName);
-
-			rs = ps.executeQuery();
-
-			if (rs.next()) {
-				return rs.getInt("diningHallID");
+			int dhID = msql.getdhID((String)json.get("dining_hall"));
+			int mID = msql.getmID((String)json.get("meal"));
+			JSONArray dishes = (JSONArray)json.get("dishes");
+			for (int j = 0; j < dishes.size(); j++) {
+				JSONObject dish = (JSONObject)dishes.get(j);
+				int kID = msql.getkID((String)dish.get("kitchen"), dhID);
+				int dID = msql.getdID((String)dish.get("dish_name"));
+				msql.addTodhDishes(dID, mID, kID, this.date);
+				JSONArray allergens = (JSONArray)dish.get("dietary_tags");
+				for (int k = 0; k < allergens.size(); k++) {
+					String allergen = (String)allergens.get(k);
+					int aID = msql.getaID(allergen);
+					msql.addToDishAllergens(aID, dID);
+				}
 			}
-			sql = "INSERT INTO DiningHalls (name) VALUES (?);";
-
-			ps = conn.prepareStatement(sql);
-
-			ps.setString(0, dhName);
-
-			ps.execute();
-
-			sql = "SELECT diningHallID FROM DiningHalls WHERE name=?;";
-			ps = conn.prepareStatement(sql);
-			ps.setString(0, dhName);
-
-			rs = ps.executeQuery();
-
-			if (rs.next()) {
-				return rs.getInt("diningHallID");
-			}
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
 		}
-		return id;
-	}
-
-	private int getmID(String mName, Connection conn, PreparedStatement ps, ResultSet rs) {
-		int id = -1;
-		try {
-			String sql = "SELECT mealID FROM Meals WHERE name=?;";
-			ps = conn.prepareStatement(sql);
-			ps.setString(0, mName);
-
-			rs = ps.executeQuery();
-
-			if (rs.next()) {
-				return rs.getInt("mealID");
-			}
-			sql = "INSERT INTO Meals (name) VALUES (?);";
-
-			ps = conn.prepareStatement(sql);
-
-			ps.setString(0, mName);
-
-			ps.execute();
-
-			sql = "SELECT mealID FROM Meals WHERE name=?;";
-			ps = conn.prepareStatement(sql);
-			ps.setString(0, mName);
-
-			rs = ps.executeQuery();
-
-			if (rs.next()) {
-				return rs.getInt("mealID");
-			}
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return id;
-	}
-
-	private Connection getConnection() {
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			// Local
-			return DriverManager.getConnection("jdbc:mysql://localhost:3306/dining_app?user=root&password=root");
-			// GCP
-			//return DriverManager.getConnection("jdbc:mysql://35.185.251.221:3306/dining_app?user=root&password=root");
-		} catch (SQLException sqle) {
-			System.out.println("sqle: " + sqle.getMessage());
-		} catch (ClassNotFoundException cnfe) {
-			System.out.println("cnfe: " + cnfe.getMessage());
-		}
-		return null;
-	}
-
-	private void closeConnection(Connection conn, PreparedStatement ps, ResultSet rs) {
-		try {
-			if (rs != null) { rs.close(); }
-			if (ps != null) { ps.close(); }
-			if (conn != null) { conn.close(); }
-		}
-		catch (SQLException sqle) {
-			System.out.println("sqle: " + sqle.getMessage());
-		}
+		msql.closeConnection();
 	}
 }
