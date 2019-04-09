@@ -1,0 +1,21 @@
+[
+	{
+		"name": "Everybody's Kitchen",
+		"mealtimes": [
+			{
+				"name": "breakfast",
+				"kitchens": [
+					{
+						"name": "Mezze Bar",
+						"dishes": [
+							{
+								"name": "TestDish",
+								"allergies": ["peanuts", "shellfish"]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]
