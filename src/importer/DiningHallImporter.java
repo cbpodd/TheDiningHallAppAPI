@@ -6,23 +6,36 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import data.MySQL;
+
 public class DiningHallImporter implements Runnable {
 	private LocalDate date;
-	private JSONObject res = null;
+	private JSONArray res = null;
 	private static final String scraperURI = "https://us-central1-menuscraper.cloudfunctions.net/scrape_date?date=";
 
 	public DiningHallImporter(LocalDate d) {
 		this.date = d;
 	}
 
-	private JSONObject getFromScraper() {
-		JSONObject json = null;
+	public void run() {
+		this.res = getFromScraper();
+		this.importToDatabase();
+	}
+
+	private JSONArray getFromScraper() {
+		JSONArray json = null;
 
 		StringBuilder sb = new StringBuilder(scraperURI);
 		try {
@@ -43,8 +56,7 @@ public class DiningHallImporter implements Runnable {
 			
 			JSONParser p = new JSONParser();
 			String jsonString = sb.toString();
-			jsonString = jsonString.replaceAll("[\\n\\t]", "");
-			json = (JSONObject)p.parse(jsonString);
+			json = (JSONArray)p.parse(jsonString);
 		} catch (MalformedURLException me) {
 			me.printStackTrace();
 		} catch (IOException ie) {
@@ -55,8 +67,27 @@ public class DiningHallImporter implements Runnable {
 		return json;
 	}
 
-	public void run() {
-		this.res = getFromScraper();
-		System.out.println(this.res);
+	private void importToDatabase() {
+		MySQL msql = new MySQL();
+
+		for (int i = 0; i < this.res.size(); i++) {
+			JSONObject json = (JSONObject)this.res.get(i);
+			int dhID = msql.getdhID((String)json.get("dining_hall"));
+			int mID = msql.getmID((String)json.get("meal"));
+			JSONArray dishes = (JSONArray)json.get("dishes");
+			for (int j = 0; j < dishes.size(); j++) {
+				JSONObject dish = (JSONObject)dishes.get(j);
+				int kID = msql.getkID((String)dish.get("kitchen"), dhID);
+				int dID = msql.getdID((String)dish.get("dish_name"));
+				msql.addTodhDishes(dID, mID, kID, this.date);
+				JSONArray allergens = (JSONArray)dish.get("dietary_tags");
+				for (int k = 0; k < allergens.size(); k++) {
+					String allergen = (String)allergens.get(k);
+					int aID = msql.getaID(allergen);
+					msql.addToDishAllergens(aID, dID);
+				}
+			}
+		}
+		msql.closeConnection();
 	}
 }
