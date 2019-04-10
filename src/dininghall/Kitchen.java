@@ -4,13 +4,13 @@ import java.util.Collection;
 
 import org.json.simple.JSONObject;
 
-class MealTime {
+class Kitchen {
 	private String name;
-	private Collection<Kitchen> kitchens;
+	private Collection<Dish> dishes;
 
-	MealTime(String n, Collection<Kitchen> kits) {
+	Kitchen(String n, Collection<Dish> d) {
 		this.name = n;
-		this.kitchens = kits;
+		this.dishes = d;
 	}
 
 	JSONObject toJSON() {
