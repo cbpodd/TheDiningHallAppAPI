@@ -1,7 +1,9 @@
 package dininghall;
 
 import java.util.Collection;
+import java.util.HashSet;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 class Kitchen {
@@ -13,7 +15,23 @@ class Kitchen {
 		this.dishes = d;
 	}
 
+	Kitchen(String n) {
+		this.name = n;
+		this.dishes = new HashSet<Dish>();
+	}
+
+	void addDish(Dish d) {
+		this.dishes.add(d);
+	}
+
 	JSONObject toJSON() {
-		return null;
+		JSONObject json = new JSONObject();
+		json.put("name", this.name);
+		JSONArray ds = new JSONArray();
+		for (Dish dish : this.dishes) {
+			ds.add(dish.toJSON());
+		}
+		json.put("dishes", ds);
+		return json;
 	}
 }
