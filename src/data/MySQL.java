@@ -285,4 +285,36 @@ public class MySQL {
 			sqle.printStackTrace();
 		}
 	}
+
+	public ResultSet getDishes(String name, LocalDate date) {
+		ResultSet res = null;
+		
+		Date sqlDate = java.sql.Date.valueOf(date);
+		
+		try {
+			String sql = "SELECT d.name AS dName, m.name AS mName, "
+							+ "k.name AS kName, a.name AS aName "
+							+ "FROM DiningHallDishes dhd, DiningHalls dh, "
+							+ "Dishes d, Kitchens k, Meals m, DishAllergens da, "
+							+ "Allergens a "
+    						+ "WHERE dhd.dishID=d.dishID "
+							+ "AND dhd.mealID=m.mealID "
+        					+ "AND k.diningHallID=dh.diningHallID "
+        					+ "AND dhd.kitchenID=k.kitchenID "
+        					+ "AND da.dishID=d.dishID "
+        					+ "AND da.allergenID=a.allergenID "
+        					+ "AND dt=? "
+        					+ "AND dh.name=? "
+							+ "ORDER BY m.name, k.name, d.name;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setString(2, name);
+			this.ps.setString(1, sqlDate.toString());
+
+			res = ps.executeQuery();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return res;
+	}
+
 }
