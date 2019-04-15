@@ -317,4 +317,138 @@ public class MySQL {
 		return res;
 	}
 
+	public int getUser(String uName, String pWord) {
+		int ans = -1;
+		try {
+			String sql = "SELECT userID "
+							+ "FROM Users "
+							+ "WHERE uname=? "
+							+ "AND pword=?;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setString(1, uName);
+			this.ps.setString(2, pWord);
+
+			this.rs = ps.executeQuery();
+			if (this.rs.next()) {
+				ans = this.rs.getInt("userID");
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return ans;	
+	}
+
+	public void addUser(String uName, String pWord) {
+		try {
+			String sql = "SELECT userID "
+							+ "FROM Users "
+							+ "WHERE uname=? "
+							+ "AND pword=?;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setString(1, uName);
+			this.ps.setString(2, pWord);
+
+			this.rs = ps.executeQuery();
+			if (this.rs.next()) {
+				return;
+			}
+			sql = "INSERT INTO Users (uname, pword) VALUES (?, ?);";
+
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setString(1, uName);
+			this.ps.setString(2, pWord);
+
+			ps.execute();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+
+	public void addFavorite(int userID, String dName) {
+		int dishID = this.getdID(dName);
+		try {
+			String sql = "SELECT userFavoriteID "
+							+ "FROM UserFavorites "
+							+ "WHERE userID=? "
+							+ "AND dishID=?;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setInt(1, userID);
+			this.ps.setInt(2, dishID);
+
+			this.rs = ps.executeQuery();
+			if (this.rs.next()) {
+				return;
+			}
+			sql = "INSERT INTO UserFavorites (userID, dishID) "
+							+ "VALUES (?, ?);";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setInt(1, userID);
+			this.ps.setInt(2, dishID);
+
+			ps.execute();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+
+	public ResultSet getFavorites(int userID) {
+		ResultSet res = null;
+		try {
+			String sql = "SELECT d.name "
+							+ "FROM UserFavorites u, Dishes d "
+							+ "WHERE userID=? "
+							+ "AND d.dishID=u.dishID;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setInt(1, userID);
+
+			res = ps.executeQuery();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return res;	
+	}
+
+	public void addAllergen(int userID, String aName) {
+		int allergenID = this.getaID(aName);
+		try {
+			String sql = "SELECT userAllergenID "
+							+ "FROM UserAllergens "
+							+ "WHERE userID=? "
+							+ "AND allergenID=?;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setInt(1, userID);
+			this.ps.setInt(2, allergenID);
+
+			this.rs = ps.executeQuery();
+			if (this.rs.next()) {
+				return;
+			}
+			sql = "INSERT INTO UserAllergens (userID, allergenID) "
+							+ "VALUES (?, ?);";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setInt(1, userID);
+			this.ps.setInt(2, allergenID);
+
+			ps.execute();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+	}
+
+	public ResultSet getAllergens(int userID) {
+		ResultSet res = null;
+		try {
+			String sql = "SELECT a.name "
+							+ "FROM UserAllergens u, Allergens a "
+							+ "WHERE userID=? "
+							+ "AND u.allergenID=a.allergenID;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setInt(1, userID);
+
+			res = ps.executeQuery();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return res;	
+	}
 }
