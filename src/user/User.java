@@ -9,31 +9,38 @@ import data.MySQL;
 
 public class User {
 	private int userID;
-	private MySQL mysql;
 
 	public User(String uname, String pword) {
-		this.mysql = new MySQL();
-		this.userID = this.mysql.getUser(uname, pword);
+		MySQL mysql = new MySQL();
+		this.userID = mysql.getUser(uname, pword);
+		mysql.closeConnection();
 	}
 
 	public static void addUser(String uname, String pword) {
 		MySQL mysql = new MySQL();
 
 		mysql.addUser(uname, pword);
+
+		mysql.closeConnection();
 	}
 
 	public void addDish(String dName) {
-		this.mysql.addFavorite(this.userID, dName);
+		MySQL mysql = new MySQL();
+		mysql.addFavorite(this.userID, dName);
+		mysql.closeConnection();
 	}
 
 	public void addAllergen(String aName) {
-		this.mysql.addAllergen(userID, aName);
+		MySQL mysql = new MySQL();
+		mysql.addAllergen(userID, aName);
+		mysql.closeConnection();
 	}
 
 	public JSONArray getAllergens() {
+		MySQL mysql = new MySQL();
 		JSONArray json = new JSONArray();
 
-		ResultSet rs = this.mysql.getAllergens(this.userID);
+		ResultSet rs = mysql.getAllergens(this.userID);
 		try {
 		while (rs.next()) {
 			json.add(rs.getString("name"));
@@ -41,12 +48,14 @@ public class User {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
+		mysql.closeConnection();
 		return json;
 	}
 
 	public JSONArray getDishes() {
+		MySQL mysql = new MySQL();
 		JSONArray json = new JSONArray();
-		ResultSet rs = this.mysql.getFavorites(this.userID);
+		ResultSet rs = mysql.getFavorites(this.userID);
 		try {
 		while (rs.next()) {
 			json.add(rs.getString("name"));
@@ -54,6 +63,7 @@ public class User {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
+		mysql.closeConnection();
 		return json;		
 	}
 }
