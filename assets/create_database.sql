@@ -24,6 +24,16 @@ CREATE TABLE UserFavorites (
 		REFERENCES Dishes(dishID)
 );
 
+CREATE TABLE UserAllergens (
+	userAllergenID INT PRIMARY KEY AUTO_INCREMENT,
+	userID INT,
+	allergenID INT,
+	FOREIGN KEY (userID)
+		REFERENCES Users(userID),
+	FOREIGN KEY (allergenID)
+		REFERENCES Dishes(allergenID)
+);
+
 CREATE TABLE DiningHalls (
 	DiningHallID INT PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(50) NOT NULL
