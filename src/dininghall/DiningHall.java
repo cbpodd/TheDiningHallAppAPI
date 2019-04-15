@@ -15,10 +15,12 @@ public class DiningHall {
 	private Collection<MealTime> mtimes;
 	private LocalDate date;
 	private String name;
+	private MySQL mysql;
 
 	public DiningHall(String n, LocalDate d) {
 		this.name = n;
 		this.date = d;
+		this.mysql = new MySQL();
 		this.mtimes = getMealTimes(this.name, this.date);
 	}
 
@@ -34,9 +36,7 @@ public class DiningHall {
 	}
 
 	private Collection<MealTime> getMealTimes(String name, LocalDate date) {
-		MySQL mysql = new MySQL();
-
-		ResultSet rs = mysql.getDishes(name, date);
+		ResultSet rs = this.mysql.getDishes(name, date);
 
 		Collection<MealTime> mealtimes = new HashSet<MealTime>();
 
