@@ -18,9 +18,12 @@ public class DiningHallTests {
 			json.add(new DiningHall("Parkside Restaurant & Grill", d).toJSON());
 			for (Object j : json) {
 				JSONObject js = (JSONObject)j;
-				System.out.println(j);
-				System.out.println();
-				System.out.println();
+				JSONArray mt = (JSONArray)js.get("mealtimes");
+				for (Object m : mt) {
+					JSONObject mtj = (JSONObject)m;
+					System.out.println(js.get("name"));
+					System.out.println(mtj.get("name"));
+				}
 				assertTrue("Mealtimes is not empty", ((JSONArray)(js.get("mealtimes"))).size() > 0);	
 			}		
 		}

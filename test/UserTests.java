@@ -1,6 +1,7 @@
 import org.json.simple.JSONArray;
 import org.junit.jupiter.api.Test;
 
+import data.MySQL;
 import user.User;
 
 public class UserTests {
@@ -43,5 +44,13 @@ public class UserTests {
 		for (int i = 0; i < all.size(); i++) {
 			System.out.println(all.get(i));
 		}
+	}
+	
+	@Test
+	public void deleteUser() {
+		MySQL mysql = new MySQL();
+		int userID = mysql.getUser("testUser", "tester");
+		mysql.closeConnection();
+		User.deleteUser(userID);
 	}
 }
