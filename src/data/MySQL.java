@@ -373,9 +373,9 @@ public class MySQL {
 			ps.execute();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		}		
+		}
 	}
-	
+
 	public void addFavorite(int userID, String dName) {
 		int dishID = this.getdID(dName);
 		try {
