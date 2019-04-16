@@ -71,6 +71,9 @@ public class DiningHall {
 						d.addAllergy(rs.getString("aName"));
 					}
 				} else {
+					if (d != null) {
+						k.addDish(d);
+					}
 					if (k != null) {
 						m.addKitchen(k);
 					}
@@ -85,6 +88,15 @@ public class DiningHall {
 					d = new Dish(dName);
 					d.addAllergy(rs.getString("aName"));
 				}
+			}
+			if (d != null) {
+				k.addDish(d);
+			}
+			if (k != null) {
+				m.addKitchen(k);
+			}
+			if (m != null) {
+				mealtimes.add(m);
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();

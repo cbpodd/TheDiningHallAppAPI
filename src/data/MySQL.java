@@ -364,6 +364,18 @@ public class MySQL {
 		}
 	}
 
+	public void deleteUser(int userID) {
+		try {
+			String sql = "DELETE FROM Users WHERE userID=?;";
+			this.ps = this.conn.prepareStatement(sql);
+			this.ps.setInt(1, userID);
+
+			ps.execute();
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}		
+	}
+	
 	public void addFavorite(int userID, String dName) {
 		int dishID = this.getdID(dName);
 		try {
