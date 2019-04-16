@@ -288,9 +288,9 @@ public class MySQL {
 
 	public ResultSet getDishes(String name, LocalDate date) {
 		ResultSet res = null;
-		
+
 		Date sqlDate = java.sql.Date.valueOf(date);
-		
+
 		try {
 			String sql = "SELECT d.name AS dName, m.name AS mName, "
 							+ "k.name AS kName, a.name AS aName "
@@ -335,7 +335,7 @@ public class MySQL {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return ans;	
+		return ans;
 	}
 
 	public void addUser(String uName, String pWord) {
@@ -405,7 +405,7 @@ public class MySQL {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return res;	
+		return res;
 	}
 
 	public void addAllergen(int userID, String aName) {
@@ -449,6 +449,6 @@ public class MySQL {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return res;	
+		return res;
 	}
 }
