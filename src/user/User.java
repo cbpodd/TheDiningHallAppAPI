@@ -24,6 +24,14 @@ public class User {
 		mysql.closeConnection();
 	}
 
+	public static void deleteUser(int userID) {
+		MySQL mysql = new MySQL();
+
+		mysql.deleteUser(userID);
+
+		mysql.closeConnection();
+	}
+	
 	public void addDish(String dName) {
 		MySQL mysql = new MySQL();
 		mysql.addFavorite(this.userID, dName);
