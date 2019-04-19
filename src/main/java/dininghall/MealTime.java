@@ -1,4 +1,4 @@
-package dininghall;
+package main.java.dininghall;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,7 +24,6 @@ class MealTime {
 		this.kitchens.add(k);
 	}
 
-
 	Collection<Kitchen> getKitchens(){
 		return this.kitchens;
 	}
@@ -32,7 +31,6 @@ class MealTime {
 	String getName() {
 		return this.name;
 	}
-
 
 	JSONObject toJSON() {
 		JSONObject json = new JSONObject();

@@ -1,4 +1,4 @@
-package dininghall;
+package main.java.dininghall;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,7 +23,6 @@ class Kitchen {
 	void addDish(Dish d) {
 		this.dishes.add(d);
 	}
-
 
 	Collection<Dish> getDishes() {
 		return this.dishes;
