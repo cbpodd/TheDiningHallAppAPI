@@ -1,4 +1,4 @@
-package dininghall;
+package main.java.dininghall;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,6 +36,64 @@ public class DiningHall {
 			mts.add(mt.toJSON());
 		}
 		json.put("mealtimes", mts);
+		return json;
+	}
+
+	// Utility Functions
+
+	public boolean noData() {
+		return this.mtimes.size() < 2;
+	}
+
+	public Collection<JSONObject> toJSONCollection() {
+		Collection<JSONObject> dishes = new ArrayList<JSONObject>();
+
+		for (MealTime mt : this.mtimes){
+			for(Kitchen kt : mt.getKitchens()) {
+				for(Dish dh : kt.getDishes()){
+					JSONObject dish = new JSONObject();
+					for(String allergens : allAllergens){
+						if(dh.getAllergens().contains(allergens)){
+							dish.put(allergens, true);
+						} else {
+							dish.put(allergens, false);
+						}
+					}
+					dish.put("name", dh.getName());
+					dish.put("mealtime", mt.getName());
+					dish.put("hall", this.name);
+					dishes.add(dish);
+				}
+			}
+		}
+
+		return dishes;
+
+	}
+
+	public JSONObject toSimplifiedJSON(){
+		JSONObject json = new JSONObject();
+		JSONArray dishes = new JSONArray();
+		for (MealTime mt : this.mtimes){
+			for(Kitchen kt : mt.getKitchens()) {
+				for(Dish dh : kt.getDishes()){
+					JSONObject dish = new JSONObject();
+					for(String allergens : allAllergens){
+						if(dh.getAllergens().contains(allergens)){
+							dish.put(allergens, true);
+						} else {
+							dish.put(allergens, false);
+						}
+					}
+					dish.put("name", dh.getName());
+					dish.put("mealtime", mt.getName());
+					dish.put("hall", this.name);
+					dishes.add(dish);
+				}
+			}
+		}
+		json.put("dishes", dishes);
+
 		return json;
 	}
 
@@ -112,61 +170,5 @@ public class DiningHall {
 	}
 
 
-	// Utility Functions
 
-	public boolean noData() {
-		return this.mtimes.size() < 2;
-	}
-
-	public Collection<JSONObject> toJSONCollection() {
-		Collection<JSONObject> dishes = new ArrayList<JSONObject>();
-
-		for (MealTime mt : this.mtimes){
-			for(Kitchen kt : mt.getKitchens()) {
-				for(Dish dh : kt.getDishes()){
-					JSONObject dish = new JSONObject();
-					for(String allergens : allAllergens){
-						if(dh.getAllergens().contains(allergens)){
-							dish.put(allergens, true);
-						} else {
-							dish.put(allergens, false);
-						}
-					}
-					dish.put("name", dh.getName());
-					dish.put("mealtime", mt.getName());
-					dish.put("hall", this.name);
-					dishes.add(dish);
-				}
-			}
-		}
-
-		return dishes;
-
-	}
-
-	public JSONObject toSimplifiedJSON(){
-		JSONObject json = new JSONObject();
-		JSONArray dishes = new JSONArray();
-		for (MealTime mt : this.mtimes){
-			for(Kitchen kt : mt.getKitchens()) {
-				for(Dish dh : kt.getDishes()){
-					JSONObject dish = new JSONObject();
-					for(String allergens : allAllergens){
-						if(dh.getAllergens().contains(allergens)){
-							dish.put(allergens, true);
-						} else {
-							dish.put(allergens, false);
-						}
-					}
-					dish.put("name", dh.getName());
-					dish.put("mealtime", mt.getName());
-					dish.put("hall", this.name);
-					dishes.add(dish);
-				}
-			}
-		}
-		json.put("dishes", dishes);
-
-		return json;
-	}
 }
