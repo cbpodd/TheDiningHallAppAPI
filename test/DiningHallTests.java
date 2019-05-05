@@ -23,6 +23,7 @@ public class DiningHallTests {
 					JSONObject mtj = (JSONObject)m;
 					System.out.println(js.get("name"));
 					System.out.println(mtj.get("name"));
+					System.out.println(mtj.get("kitchens"));
 				}
 				assertTrue("Mealtimes is not empty", ((JSONArray)(js.get("mealtimes"))).size() > 0);	
 			}		
