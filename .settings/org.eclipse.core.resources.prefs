@@ -1,4 +1,8 @@
 eclipse.preferences.version=1
+<<<<<<< HEAD
+=======
+encoding//src/main/resources=UTF-8
+>>>>>>> b82546c4cf633426ca663ec1d4b98bba19872ea9
 encoding/<project>=UTF-8
 encoding/src=UTF-8
 encoding/test=UTF-8

@@ -1,4 +1,4 @@
-package dininghall;
+package main.java.dininghall;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +17,11 @@ public class DiningHall {
 	private LocalDate date;
 	private String name;
 
+
+	private String [] allAllergens = {"Dairy", "Eggs", "Fish",
+	"Food Not Analyzed for Allergens", "Peanuts", "Pork", "Sesame",
+	"Shellfish", "Soy", "Tree Nuts", "Vegan", "Vegetarian", "Wheat / Gluten"};
+
 	public DiningHall(String n, LocalDate d) {
 		this.name = n;
 		this.date = d;
@@ -25,7 +30,7 @@ public class DiningHall {
 
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
-		json.put("hall", this.name);
+		json.put("name", this.name);
 		JSONArray mts = new JSONArray();
 		for (MealTime mt : this.mtimes) {
 			mts.add(mt.toJSON());
@@ -34,15 +39,63 @@ public class DiningHall {
 		return json;
 	}
 
-	public Collection<JSONObject> toJSONCollection() {
-		Collection<JSONObject> dishes = new ArrayList<JSONObject>();
-		for (MealTime mt : this.mtimes) {
-			dishes.add(mt.toJSON());
-		}
-		return dishes;
+	// Utility Functions
+
+	public boolean noData() {
+		return this.mtimes.size() < 2;
 	}
 
-	// Utility Functions
+	public Collection<JSONObject> toJSONCollection() {
+		Collection<JSONObject> dishes = new ArrayList<JSONObject>();
+
+		for (MealTime mt : this.mtimes){
+			for(Kitchen kt : mt.getKitchens()) {
+				for(Dish dh : kt.getDishes()){
+					JSONObject dish = new JSONObject();
+					for(String allergens : allAllergens){
+						if(dh.getAllergens().contains(allergens)){
+							dish.put(allergens, true);
+						} else {
+							dish.put(allergens, false);
+						}
+					}
+					dish.put("name", dh.getName());
+					dish.put("mealtime", mt.getName());
+					dish.put("hall", this.name);
+					dishes.add(dish);
+				}
+			}
+		}
+
+		return dishes;
+
+	}
+
+	public JSONObject toSimplifiedJSON(){
+		JSONObject json = new JSONObject();
+		JSONArray dishes = new JSONArray();
+		for (MealTime mt : this.mtimes){
+			for(Kitchen kt : mt.getKitchens()) {
+				for(Dish dh : kt.getDishes()){
+					JSONObject dish = new JSONObject();
+					for(String allergens : allAllergens){
+						if(dh.getAllergens().contains(allergens)){
+							dish.put(allergens, true);
+						} else {
+							dish.put(allergens, false);
+						}
+					}
+					dish.put("name", dh.getName());
+					dish.put("mealtime", mt.getName());
+					dish.put("hall", this.name);
+					dishes.add(dish);
+				}
+			}
+		}
+		json.put("dishes", dishes);
+
+		return json;
+	}
 
 	private Collection<MealTime> getMealTimes(String name, LocalDate date) {
 		MySQL mysql = new MySQL();
@@ -116,7 +169,6 @@ public class DiningHall {
 		return mealtimes;
 	}
 
-	public boolean noData() {
-		return this.mtimes.size() < 2;
-	}
+
+
 }
